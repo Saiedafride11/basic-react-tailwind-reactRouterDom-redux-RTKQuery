@@ -215,6 +215,7 @@ const HomeProductTable = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedStock, setSelectedStock] = useState("all");
+  const [selectedOrder, setSelectedOrder] = useState("asc");
   const [products, setProducts] = useState(productItems);
 
   //= Search Product ==========
@@ -225,11 +226,18 @@ const HomeProductTable = () => {
       ? products?.filter((product) =>
           selectedStock === "yes" ? product.inStock : !product.inStock
         )
-      : products?.filter((product) =>
-          product.name
-            .toLocaleLowerCase()
-            .includes(searchText.toLocaleLowerCase())
+      : products?.filter(
+          (product) =>
+            product.name
+              .toLocaleLowerCase()
+              .includes(searchText.toLocaleLowerCase()) ||
+            product.id.toString().includes(searchText)
         );
+
+  //= Ascending or Decending  Product ==========
+  const sortedProducts = [...matchedProducts].sort((a, b) =>
+    selectedOrder === "asc" ? a.id - b.id : b.id - a.id
+  );
 
   //= Category Item ==========
   const categories = [...new Set(products?.map((item) => item.category))];
@@ -256,7 +264,7 @@ const HomeProductTable = () => {
 
   return (
     <div className="mb-5">
-      <div className="shadow-xl p-2 mb-5 grid grid-cols-4 gap-4 items-center">
+      <div className="shadow-xl p-2 mb-5 grid grid-cols-5 gap-3 items-center">
         <div className="flex column flex-col">
           <label className="text-start">Product Search</label>
           <input
@@ -311,9 +319,25 @@ const HomeProductTable = () => {
             </select>
           </div>
         </div>
+
+        <div className="flex column flex-col">
+          <label className="text-start">Order</label>
+          <div className="border p-2 outline-0 rounded-lg">
+            <select
+              className="w-full outline-0 cursor-pointer"
+              onChange={(e) => {
+                setSelectedOrder(e.target.value);
+              }}
+            >
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
+          </div>
+        </div>
+
         <div className="flex column flex-col">
           <label className="text-start">Settings</label>
-          <div className="border p-2 outline-0 rounded-lg flex items-center justify-end gap-2">
+          <div className="border py-[10px] px-2 outline-0 rounded-lg flex items-center justify-end gap-2">
             <div className="cursor-pointer">
               <FileText size={20} />
             </div>
@@ -346,6 +370,7 @@ const HomeProductTable = () => {
                   </label>
                 </div>
               </th>
+              <th>Product No</th>
               <th>Name</th>
               <th>Price</th>
               <th>Category</th>
@@ -354,10 +379,10 @@ const HomeProductTable = () => {
           </thead>
 
           <tbody>
-            {matchedProducts?.length === 0 ? (
+            {sortedProducts?.length === 0 ? (
               <tr className="text-start">No data found!</tr>
             ) : (
-              matchedProducts?.map((product, index) => (
+              sortedProducts?.map((product, index) => (
                 <tr>
                   <td className={index === 0 ? "pt-3" : ""}>
                     <div className="flex items-center gap-2 ms-3 cursor-pointer">
@@ -375,6 +400,9 @@ const HomeProductTable = () => {
                         {index + 1}
                       </label>
                     </div>
+                  </td>
+                  <td className={index === 0 ? "pt-3" : ""}>
+                    prod-{product?.id}
                   </td>
                   <td className={index === 0 ? "pt-3" : ""}>{product?.name}</td>
                   <td className={index === 0 ? "pt-3" : ""}>
