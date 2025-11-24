@@ -5,6 +5,7 @@ import {
   setSearchText,
   setSelectedPage,
 } from "../../redux/features/posts/postsSlice";
+import HomeProductTable from "./HomeProductTable";
 
 function Home() {
   //= Redux ==========
@@ -30,6 +31,7 @@ function Home() {
 
   return (
     <div>
+       <HomeProductTable />
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="w-full max-w-md p-4 bg-white rounded-xl shadow-md">
           <label className="block mb-2 text-sm font-medium text-gray-700">
